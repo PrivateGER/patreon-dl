@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -45,6 +46,11 @@ func DownloadJobHandler(downloadList [][]string) {
 func DownloadWorker(id int, jobs <-chan []string, results chan<- string) {
 	fmt.Println("Download worker " + strconv.Itoa(id) + " started")
 	for j := range jobs {
+		if j[0] == "" {
+			results <- "You do not have access to " + path.Base(j[1])
+			continue
+		}
+
 		resp, err := http.Get(j[0])
 		if err != nil {
 			results <- err.Error()
@@ -52,7 +58,7 @@ func DownloadWorker(id int, jobs <-chan []string, results chan<- string) {
 		}
 
 		// Create the file
-		out, err := os.Create(filepath.Join(".", downloadDir, j[1]))
+		out, err := os.Create(filepath.Join(".", downloadDir, path.Base(j[1])))
 		if err != nil {
 			results <- err.Error()
 			continue
@@ -64,7 +70,7 @@ func DownloadWorker(id int, jobs <-chan []string, results chan<- string) {
 		if err != nil {
 			results <- err.Error()
 		}
-		results <- j[1] + " downloaded"
+		results <- path.Base(j[1]) + " downloaded"
 		_ = out.Close()
 		_ = resp.Body.Close()
 	}
