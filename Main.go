@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-var sessionID string = ""
+var buildVersion string = "DEVELOPMENT"
 
 func main()  {
 	http.HandleFunc("/gadget", ServeGadget)
@@ -13,7 +13,7 @@ func main()  {
 	http.HandleFunc("/download", DownloadURLCollector)
 	http.HandleFunc("/done", JSFinished)
 
-	fmt.Println("patreon-dl v0.0.1 - Patreon Image Downloader\nPlease open https://patreon.com/creatorname/posts, open the developer console (F12), paste the following into the console and run it with ENTER:")
+	fmt.Println("patreon-dl v" + buildVersion + " - Patreon Image Downloader\nPlease open https://patreon.com/creatorname/posts, open the developer console (F12), paste the following into the console and run it with ENTER:")
 	fmt.Println(`(async()=>{eval(await(await fetch("http://localhost:9849/gadget")).text());})();`)
 
 	fmt.Println("\nWaiting for the browser to send data on port 9849...")
