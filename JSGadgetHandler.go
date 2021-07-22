@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type PatreonUser struct {
@@ -23,8 +24,6 @@ func UserInfo(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	sb := string(body)
-	fmt.Println(sb)
 
 	var user PatreonUser
 	err = json.Unmarshal(body, &user)
@@ -32,6 +31,8 @@ func UserInfo(w http.ResponseWriter, req *http.Request) {
 		fmt.Println("Couldn't parse /user body.")
 		fmt.Println(err)
 	}
+
+	fmt.Println("Downloading images from " + user.Name + " with Patreon-ID " + strconv.Itoa(user.ID) + ".\nPlease wait for the download links to be collected...")
 
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	fmt.Fprintf(w, "OK")
@@ -48,6 +49,8 @@ func DownloadURLCollector(w http.ResponseWriter, req *http.Request) {
 		fmt.Println("Couldn't parse /download body.")
 		fmt.Println(err)
 	}
+
+	fmt.Println("Download links received!")
 
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	fmt.Fprintf(w, "OK")

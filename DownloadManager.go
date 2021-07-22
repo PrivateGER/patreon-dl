@@ -8,6 +8,7 @@ import (
 	"path"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -47,7 +48,13 @@ func DownloadWorker(id int, jobs <-chan []string, results chan<- string) {
 	fmt.Println("Download worker " + strconv.Itoa(id) + " started")
 	for j := range jobs {
 		if j[0] == "" {
-			results <- "You do not have access to " + path.Base(j[1])
+			results <- "You do not have access to " + path.Base(j[1] + ", membership tier too low")
+			continue
+		}
+
+		// Skip Dropbox logo embed
+		if strings.HasSuffix(j[1], "content-folder_dropbox-large.png") {
+			results <- "Cannot download Dropbox folders, do that manually!"
 			continue
 		}
 
