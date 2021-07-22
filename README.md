@@ -3,8 +3,6 @@
 
 ## Installation
 
----
-
 Download a release from https://github.com/PrivateGER/patreon-dl/releases.
   - Linux (64bit): patreon-dl_x.x.x_Linux_amd64
   - Linux (32bit): patreon-dl_x.x.x_Linux_i386
@@ -17,8 +15,6 @@ You can also compile patreon-dl yourself using `go build` or build for all opera
 
 ## Usage
 
----
-
 Run `patreon-dl` and follow the instructions.
 
 ### Example:
@@ -28,8 +24,6 @@ Open https://patreon.com/creatornamehere/posts in your browser. Now start `patre
 After a few seconds of loading, depending on how many posts the creator has, `patreon-dl` will start downloading all images into the `images` folder.
 
 ## Security
-
----
 
 `patreon-dl` is not distinguishable from normal use for Patreon. There is no risk of getting banned or punished for the use of this tool.
 
