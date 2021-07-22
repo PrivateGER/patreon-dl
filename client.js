@@ -1,4 +1,21 @@
 (async () => {
+    function addFileDownload(filename, id, fileURL) {
+        let newFilename = ""
+
+        if(filename == null) {
+            console.log("Skipping image you don't have access to...")
+        } else {
+            let originalFilename = filename.split(".")
+            let fileExtension = originalFilename.pop() // retrieves only the extension, text after last dot
+            newFilename = `${originalFilename.join(".")}-${id}.${fileExtension}` // frankensteins together a filename with -<id> appended
+        }
+
+        downloads.push([
+            fileURL,
+            newFilename
+        ])
+    }
+
     let basePostURL = "https://www.patreon.com/api/posts?"
 
     let campaignID = Number(window.patreon.bootstrap.creator.data.id)
@@ -34,10 +51,11 @@
     }
 
     for (let i = 0; i < initialLength; i++) {
-        downloads.push([
-            parsedInital.included[i].attributes.download_url,
-            parsedInital.included[i].attributes.file_name
-        ])
+        let originalFilename = parsedInital.included[i].attributes.file_name.split(".")
+        let fileExtension = originalFilename.pop() // retrieves only the extension, text after last dot
+        let newFilename = `${originalFilename.join(".")}-${parsedInital.included[i].id}.${fileExtension}` // frankensteins together a filename with -<id> appended
+
+        addFileDownload(parsedInital.included[i].attributes.file_name, parsedInital.included[i].id, parsedInital.included[i].attributes.download_url);
     }
 
     console.log("Collected " + downloads.length + " posts...")
@@ -57,10 +75,7 @@
         }
 
         for (let i = 0; i < includedLength; i++) {
-            downloads.push([
-                parsedPosts.included[i].attributes.download_url,
-                parsedPosts.included[i].attributes.file_name
-            ])
+            addFileDownload(parsedPosts.included[i].attributes.file_name, parsedPosts.included[i].id, parsedPosts.included[i].attributes.download_url);
         }
 
         if ("links" in parsedPosts) {

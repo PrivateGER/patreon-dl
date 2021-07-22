@@ -53,7 +53,7 @@ func DownloadWorker(id int, jobs <-chan []string, results chan<- string) {
 		}
 
 		// Skip Dropbox logo embed
-		if strings.HasSuffix(j[1], "content-folder_dropbox-large.png") {
+		if strings.HasSuffix(j[0], "content-folder_dropbox-large.png") {
 			results <- "Cannot download Dropbox folders, do that manually!"
 			continue
 		}
