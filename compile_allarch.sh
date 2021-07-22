@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="0.0.2"
+VERSION="0.1.0"
 
 echo "Building Linux..."
 GOOS=linux GOARCH=amd64 go build -ldflags "-X main.buildVersion=$VERSION" -o "build/patreon-dl_${VERSION}_Linux_amd64"
