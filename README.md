@@ -26,3 +26,11 @@ Run `patreon-dl` and follow the instructions.
 Open https://patreon.com/creatornamehere/posts in your browser. Now start `patreon-dl` and open the browser console. Paste the line of code shown by `patreon-dl` into the console and execute it by pressing ENTER. 
 
 After a few seconds of loading, depending on how many posts the creator has, `patreon-dl` will start downloading all images into the `images` folder.
+
+## Security
+
+---
+
+`patreon-dl` is not distinguishable from normal use for Patreon. There is no risk of getting banned or punished for the use of this tool.
+
+All releases of `patreon-dl` are signed with a PGP key with the fingerprint `CAE625C962F94C67` and can be verified with `gpg --verify <name>.asc`. 
