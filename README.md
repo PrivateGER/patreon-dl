@@ -1,4 +1,6 @@
 # patreon-dl: Patreon Image Downloader
+[![Downloads](https://img.shields.io/github/downloads/PrivateGER/patreon-dl/total?style=for-the-badge&color=blue)](https://github.com/PrivateGER/patreon-dl/releases/latest)
+
 `patreon-dl` lets you download images of creators you support.
 
 ## Installation
