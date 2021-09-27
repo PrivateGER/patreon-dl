@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"sync"
 )
 
 type PatreonUser struct {
@@ -16,8 +17,12 @@ type PatreonUser struct {
 }
 
 type DownloadList [][]string
+type SafeDownloadList struct {
+	list DownloadList
+	mu   sync.Mutex
+}
 
-var downloadList DownloadList
+var safeDownloadList SafeDownloadList
 
 func UserInfo(w http.ResponseWriter, req *http.Request) {
 	body, err := ioutil.ReadAll(req.Body)
@@ -48,7 +53,10 @@ func DownloadURLCollector(w http.ResponseWriter, req *http.Request) {
 		log.Fatalln(err)
 	}
 
-	err = json.Unmarshal(body, &downloadList)
+	safeDownloadList.mu.Lock()
+	defer safeDownloadList.mu.Unlock()
+
+	err = json.Unmarshal(body, &safeDownloadList.list)
 	if err != nil {
 		fmt.Println("Couldn't parse /download body.")
 		fmt.Println(err)
@@ -65,7 +73,7 @@ func DownloadURLCollector(w http.ResponseWriter, req *http.Request) {
 }
 
 func JSFinished(w http.ResponseWriter, req *http.Request) {
-	go DownloadJobHandler(downloadList)
+	go DownloadJobHandler(&safeDownloadList)
 
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	_, err := fmt.Fprintf(w, "OK")

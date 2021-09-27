@@ -17,31 +17,36 @@ var downloadDir string = "images"
 var downloadQueue chan []string
 var downloadResults chan string
 
-func DownloadJobHandler(downloadList [][]string) {
-	downloadQueue = make(chan []string, len(downloadList))
-	downloadResults = make(chan string, len(downloadList))
+func DownloadJobHandler(safeDownloadList *SafeDownloadList) {
+	safeDownloadList.mu.Lock()
+	downloadQueue = make(chan []string, len(safeDownloadList.list))
+	downloadResults = make(chan string, len(safeDownloadList.list))
+	safeDownloadList.mu.Unlock()
 
-	path := filepath.Join(".", downloadDir)
-	_ = os.MkdirAll(path, os.ModePerm)
+	filepath := filepath.Join(".", downloadDir)
+	_ = os.MkdirAll(filepath, os.ModePerm)
 
 	for w := 1; w <= 5; w++ {
 		go DownloadWorker(w, downloadQueue, downloadResults)
 	}
 
+	safeDownloadList.mu.Lock()
 	startedAt := time.Now()
-	fmt.Println("Queuing", strconv.Itoa(len(downloadList)), "downloads...")
-	for _, dlURL := range downloadList {
+	fmt.Println("Queuing", strconv.Itoa(cap(downloadQueue)), "downloads...")
+	for _, dlURL := range safeDownloadList.list {
 		downloadQueue <- dlURL
 	}
 	close(downloadQueue)
+	safeDownloadList.mu.Unlock()
 
-	for index := 1; index <= len(downloadList); index++ {
+	for index := 1; index <= cap(downloadQueue); index++ {
 		fmt.Println(<-downloadResults)
 	}
 	endedAt := time.Now()
 
 	fmt.Printf("Finished downloading in %d second(s)! Exiting...", int(endedAt.Sub(startedAt).Seconds()))
-	os.Exit(0)
+
+	return
 }
 
 func DownloadWorker(id int, jobs <-chan []string, results chan<- string) {
