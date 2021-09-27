@@ -35,7 +35,11 @@ func UserInfo(w http.ResponseWriter, req *http.Request) {
 	fmt.Println("Downloading images from " + user.Name + " with Patreon-ID " + strconv.Itoa(user.ID) + ".\nPlease wait for the download links to be collected...")
 
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	fmt.Fprintf(w, "OK")
+	_, err = fmt.Fprintf(w, "OK")
+	if err != nil {
+		log.Println(err)
+		return
+	}
 }
 
 func DownloadURLCollector(w http.ResponseWriter, req *http.Request) {
@@ -53,19 +57,31 @@ func DownloadURLCollector(w http.ResponseWriter, req *http.Request) {
 	fmt.Println("Download links received!")
 
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	fmt.Fprintf(w, "OK")
+	_, err = fmt.Fprintf(w, "OK")
+	if err != nil {
+		log.Println(err)
+		return 
+	}
 }
 
 func JSFinished(w http.ResponseWriter, req *http.Request) {
 	go DownloadJobHandler(downloadList)
 
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	fmt.Fprintf(w, "OK")
+	_, err := fmt.Fprintf(w, "OK")
+	if err != nil {
+		log.Println(err)
+		return
+	}
 }
 
 //go:embed client.js
 var jsGadget string
 func ServeGadget(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	fmt.Fprintf(w, jsGadget)
+	_, err := fmt.Fprintf(w, jsGadget)
+	if err != nil {
+		log.Println(err)
+		return 
+	}
 }

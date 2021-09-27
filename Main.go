@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -19,7 +20,7 @@ func main()  {
 	fmt.Println("\nHint: highlight the text and use CTRL+SHIFT+C to copy it.\nWaiting for the browser to send data on port 9849...")
 	err := http.ListenAndServe(":9849", nil)
 	if err != nil {
-		return
+		log.Println(err)
 	}
 }
 
