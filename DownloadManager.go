@@ -44,7 +44,10 @@ func DownloadJobHandler(safeDownloadList *SafeDownloadList) {
 	}
 	endedAt := time.Now()
 
-	fmt.Printf("Finished downloading in %d second(s)! Exiting...", int(endedAt.Sub(startedAt).Seconds()))
+	fmt.Printf(
+		"Finished downloading in %d second(s)!\nYou can download another set of images using the below JS snippet or exit patreon-dl:\n(async()=>{eval(await(await fetch(\"http://localhost:9849/gadget\")).text());})();",
+		int(endedAt.Sub(startedAt).Seconds()),
+	)
 
 	return
 }
@@ -64,7 +67,9 @@ func DownloadWorker(id int, jobs <-chan []string, results chan<- string) {
 		}
 
 		resp, err := http.Get(j[0])
+
 		if err != nil {
+			_ = resp.Body.Close()
 			results <- err.Error()
 			continue
 		}
@@ -72,18 +77,22 @@ func DownloadWorker(id int, jobs <-chan []string, results chan<- string) {
 		// Create the file
 		out, err := os.Create(filepath.Join(".", downloadDir, path.Base(j[1])))
 		if err != nil {
+			_ = resp.Body.Close()
 			results <- err.Error()
 			continue
 		}
 
 		// Write the body to file
 		_, err = io.Copy(out, resp.Body)
-
 		if err != nil {
+			_ = out.Close()
+			_ = resp.Body.Close()
 			results <- err.Error()
+			continue
 		}
+
 		results <- path.Base(j[1]) + " downloaded"
-		_ = out.Close()
 		_ = resp.Body.Close()
+		_ = out.Close()
 	}
 }
