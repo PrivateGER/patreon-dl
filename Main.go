@@ -12,7 +12,6 @@ func main()  {
 	http.HandleFunc("/gadget", ServeGadget)
 	http.HandleFunc("/user", UserInfo)
 	http.HandleFunc("/download", DownloadURLCollector)
-	http.HandleFunc("/done", JSFinished)
 
 	fmt.Println("patreon-dl v" + buildVersion + " - Patreon Image Downloader\nPlease open https://patreon.com/creatorname/posts, open the developer console (F12), paste the following into the console and run it with ENTER:")
 	fmt.Println(`(async()=>{eval(await(await fetch("http://localhost:9849/gadget")).text());})();`)

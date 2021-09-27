@@ -22,7 +22,6 @@ type SafeDownloadList struct {
 	mu   sync.Mutex
 }
 
-var safeDownloadList SafeDownloadList
 
 func UserInfo(w http.ResponseWriter, req *http.Request) {
 	body, err := ioutil.ReadAll(req.Body)
@@ -53,6 +52,7 @@ func DownloadURLCollector(w http.ResponseWriter, req *http.Request) {
 		log.Fatalln(err)
 	}
 
+	var safeDownloadList SafeDownloadList
 	safeDownloadList.mu.Lock()
 	defer safeDownloadList.mu.Unlock()
 
@@ -62,24 +62,15 @@ func DownloadURLCollector(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(err)
 	}
 
-	fmt.Println("Download links received!")
+	fmt.Println("Download links received! Starting download...")
+
+	go DownloadJobHandler(&safeDownloadList)
 
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	_, err = fmt.Fprintf(w, "OK")
 	if err != nil {
 		log.Println(err)
 		return 
-	}
-}
-
-func JSFinished(w http.ResponseWriter, req *http.Request) {
-	go DownloadJobHandler(&safeDownloadList)
-
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	_, err := fmt.Fprintf(w, "OK")
-	if err != nil {
-		log.Println(err)
-		return
 	}
 }
 

@@ -92,6 +92,5 @@
         body: JSON.stringify(downloads)
     });
 
-    await fetch("http://localhost:9849/done");
     console.log("patreon-dl is starting download...")
 })();
