@@ -1,10 +1,14 @@
 # patreon-dl: Patreon Image Downloader
 [![Downloads](https://img.shields.io/github/downloads/PrivateGER/patreon-dl/total?style=for-the-badge&color=blue)](https://github.com/PrivateGER/patreon-dl/releases/latest)
+[![AUR Package](https://img.shields.io/aur/version/patreon-dl?style=for-the-badge&color=blue)](https://aur.archlinux.org/packages/patreon-dl/)
 
 `patreon-dl` lets you download images of creators you support.
 
 ## Installation
 
+**If you are running Arch:** patreon-dl is available as [AUR package!](https://aur.archlinux.org/packages/patreon-dl/)
+
+Otherwise:
 Download a release from https://github.com/PrivateGER/patreon-dl/releases.
   - Linux (64bit): patreon-dl_x.x.x_Linux_amd64
   - Linux (32bit): patreon-dl_x.x.x_Linux_i386
