@@ -14,17 +14,22 @@ import (
 
 var downloadDir string = "images"
 
+type result struct {
+	err error
+	path string
+}
+
 var downloadQueue chan []string
-var downloadResults chan string
+var downloadResults chan *result
 
 func DownloadJobHandler(safeDownloadList *SafeDownloadList) {
 	safeDownloadList.mu.Lock()
 	downloadQueue = make(chan []string, len(safeDownloadList.list))
-	downloadResults = make(chan string, len(safeDownloadList.list))
+	downloadResults = make(chan *result, len(safeDownloadList.list))
 	safeDownloadList.mu.Unlock()
 
-	filepath := filepath.Join(".", downloadDir)
-	_ = os.MkdirAll(filepath, os.ModePerm)
+	fp := filepath.Join(".", downloadDir)
+	_ = os.MkdirAll(fp, os.ModePerm)
 
 	for w := 1; w <= 5; w++ {
 		go DownloadWorker(w, downloadQueue, downloadResults)
@@ -40,7 +45,12 @@ func DownloadJobHandler(safeDownloadList *SafeDownloadList) {
 	safeDownloadList.mu.Unlock()
 
 	for index := 1; index <= cap(downloadQueue); index++ {
-		fmt.Println(<-downloadResults)
+		res := <-downloadResults
+		if res.err != nil {
+			fmt.Printf("Got error: %v", res.err)
+			continue
+		}
+		fmt.Println(res.path)
 	}
 	endedAt := time.Now()
 
@@ -52,47 +62,44 @@ func DownloadJobHandler(safeDownloadList *SafeDownloadList) {
 	return
 }
 
-func DownloadWorker(id int, jobs <-chan []string, results chan<- string) {
+func DownloadWorker(id int, jobs <-chan []string, resultCh chan<- *result) {
 	fmt.Println("Download worker " + strconv.Itoa(id) + " started")
-	for j := range jobs {
-		if j[0] == "" {
-			results <- "You do not have access to " + path.Base(j[1] + ", membership tier too low")
-			continue
+	processJob := func(job, strPath string) *result {
+		if job == "" {
+			err := fmt.Errorf("you do not have access to %s, membership tier too low", path.Base(strPath))
+			return &result{err: err}
 		}
 
 		// Skip Dropbox logo embed
-		if strings.HasSuffix(j[0], "content-folder_dropbox-large.png") {
-			results <- "Cannot download Dropbox folders, do that manually!"
-			continue
+		if strings.HasSuffix(job, "content-folder_dropbox-large.png") {
+			err := fmt.Errorf( "cannot download Dropbox folders, do that manually")
+			return &result{err: err}
 		}
 
-		resp, err := http.Get(j[0])
-
+		resp, err := http.Get(job)
 		if err != nil {
-			_ = resp.Body.Close()
-			results <- err.Error()
-			continue
+			return &result{err: err}
 		}
+		defer resp.Body.Close()
 
 		// Create the file
-		out, err := os.Create(filepath.Join(".", downloadDir, path.Base(j[1])))
+		out, err := os.Create(filepath.Join(".", downloadDir, path.Base(strPath)))
 		if err != nil {
-			_ = resp.Body.Close()
-			results <- err.Error()
-			continue
+			return &result{err: err}
 		}
+		defer out.Close()
 
 		// Write the body to file
 		_, err = io.Copy(out, resp.Body)
 		if err != nil {
-			_ = out.Close()
-			_ = resp.Body.Close()
-			results <- err.Error()
-			continue
+			return &result{err: err}
 		}
 
-		results <- path.Base(j[1]) + " downloaded"
-		_ = resp.Body.Close()
-		_ = out.Close()
+		pathStr := path.Base(strPath) + " downloaded"
+		return  &result{path: pathStr}
+	}
+
+	for j := range jobs {
+		resultCh <-processJob(j[0], j[1])
 	}
 }
