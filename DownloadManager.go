@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/schollz/progressbar/v3"
 	"io"
 	"net/http"
 	"os"
@@ -29,10 +30,11 @@ func DownloadJobHandler(safeDownloadList *SafeDownloadList) {
 	safeDownloadList.mu.Unlock()
 
 	fp := filepath.Join(".", downloadDir)
+	pb := progressbar.Default(int64(cap(downloadQueue)))
 	_ = os.MkdirAll(fp, os.ModePerm)
 
 	for w := 1; w <= 5; w++ {
-		go DownloadWorker(w, downloadQueue, downloadResults)
+		go DownloadWorker(w, downloadQueue, downloadResults, pb)
 	}
 
 	safeDownloadList.mu.Lock()
@@ -50,7 +52,7 @@ func DownloadJobHandler(safeDownloadList *SafeDownloadList) {
 			fmt.Printf("Got error: %v", res.err)
 			continue
 		}
-		fmt.Println(res.path)
+		//fmt.Println(res.path) // enable to log each downloaded file
 	}
 	endedAt := time.Now()
 
@@ -62,7 +64,7 @@ func DownloadJobHandler(safeDownloadList *SafeDownloadList) {
 	return
 }
 
-func DownloadWorker(id int, jobs <-chan []string, resultCh chan<- *result) {
+func DownloadWorker(id int, jobs <-chan []string, resultCh chan<- *result, bar *progressbar.ProgressBar) {
 	fmt.Println("Download worker " + strconv.Itoa(id) + " started")
 	processJob := func(job, strPath string) *result {
 		if job == "" {
@@ -95,6 +97,7 @@ func DownloadWorker(id int, jobs <-chan []string, resultCh chan<- *result) {
 			return &result{err: err}
 		}
 
+		bar.Add(1)
 		pathStr := path.Base(strPath) + " downloaded"
 		return  &result{path: pathStr}
 	}
