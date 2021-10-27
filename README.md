@@ -10,12 +10,13 @@
 
 Otherwise:
 Download a release from https://github.com/PrivateGER/patreon-dl/releases.
-  - Linux (64bit): patreon-dl_x.x.x_Linux_amd64
+  - Linux (64bit): patreon-dl_x.x.x_Linux_x86_64
   - Linux (32bit): patreon-dl_x.x.x_Linux_i386
+  - Linux (ARM64): patreon-dl_x.x.x_Linux_arm64
   - Windows (64bit): patreon-dl_x.x.x_Windows_x86_64.exe 
   - Windows (32bit): patreon-dl_x.x.x_Windows_i386.exe
   - Mac (x64): patreon-dl_x.x.x_Darwin_x86_64
-  - Mac (ARM): patreon-dl_x.x.x_Darwin_ARM64
+  - Mac (ARM): patreon-dl_x.x.x_Darwin_arm64
 
 You can also compile patreon-dl yourself using `go build` or build for all operating systems using `compile_allarch.sh`.
 
@@ -33,4 +34,4 @@ After a few seconds of loading, depending on how many posts the creator has, `pa
 
 `patreon-dl` is not distinguishable from normal use for Patreon. There is no risk of getting banned or punished for the use of this tool.
 
-All releases of `patreon-dl` are signed with a PGP key with the fingerprint `CAE625C962F94C67` and can be verified with `gpg --verify <name>.asc`. 
+All releases of `patreon-dl` are signed with a PGP key with the fingerprint `CAE625C962F94C67` and can be verified with `gpg --verify <name>.sig`. 
