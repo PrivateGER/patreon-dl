@@ -18,7 +18,7 @@ Download a release from https://github.com/PrivateGER/patreon-dl/releases.
   - Mac (x64): patreon-dl_x.x.x_Darwin_x86_64
   - Mac (ARM): patreon-dl_x.x.x_Darwin_arm64
 
-You can also compile patreon-dl yourself using `go build` or build for all operating systems using `compile_allarch.sh`.
+You can also compile patreon-dl yourself using `go build` or build for all operating systems using [gorelaser](https://github.com/goreleaser/goreleaser) with the included configuration file.
 
 ## Usage
 
