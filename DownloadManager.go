@@ -8,6 +8,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -33,7 +34,7 @@ func DownloadJobHandler(safeDownloadList *SafeDownloadList) {
 	pb := progressbar.Default(int64(cap(downloadQueue)))
 	_ = os.MkdirAll(fp, os.ModePerm)
 
-	for w := 1; w <= 5; w++ {
+	for w := 1; w <= runtime.NumCPU(); w++ {
 		go DownloadWorker(w, downloadQueue, downloadResults, pb)
 	}
 
@@ -75,7 +76,7 @@ func DownloadWorker(id int, jobs <-chan []string, resultCh chan<- *result, bar *
 
 		// Skip Dropbox logo embed
 		if strings.HasSuffix(job, "content-folder_dropbox-large.png") {
-			err := fmt.Errorf( "cannot download Dropbox folders, do that manually")
+			err := fmt.Errorf( "cannot download external folders automatically")
 			return &result{err: err}
 		}
 
