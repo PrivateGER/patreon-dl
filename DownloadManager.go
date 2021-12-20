@@ -56,8 +56,9 @@ func DownloadJobHandler(safeDownloadList *SafeDownloadList) {
 	}
 	endedAt := time.Now()
 
-	fmt.Printf(
-		"Finished downloading in %d second(s)!\nYou can download another set of images using the below JS snippet or exit patreon-dl:\n(async()=>{eval(await(await fetch(\"http://localhost:9849/gadget\")).text());})();",
+	fmt.Printf(`Finished downloading in %d second(s)!
+You can download another set of images using the below JS snippet or exit patreon-dl:
+(async()=>{eval(await(await fetch(\"http://localhost:9849/gadget\")).text());})();`,
 		int(endedAt.Sub(startedAt).Seconds()),
 	)
 
