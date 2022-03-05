@@ -16,9 +16,9 @@
         ])
     }
 
-    let basePostURL = "https://www.patreon.com/api/posts?"
+    const basePostURL = "https://www.patreon.com/api/posts?"
 
-    let campaignID = Number(window.patreon.bootstrap.creator.data.id)
+    const campaignID = Number(window.patreon.bootstrap.creator.data.id)
 
     console.log("Sending Patreon information to patreon-dl...")
 
@@ -42,8 +42,8 @@
 
     let downloads = [];
 
-    let initalPostRequest = await fetch(basePostURL + initialQueryParams.toString())
-    let parsedInital = await initalPostRequest.json()
+    const initalPostRequest = await fetch(basePostURL + initialQueryParams.toString())
+    const parsedInital = await initalPostRequest.json()
 
     let initialLength = 0;
     if ("included" in parsedInital) {
@@ -51,14 +51,18 @@
     }
 
     for (let i = 0; i < initialLength; i++) {
-        let originalFilename = parsedInital.included[i].attributes.file_name.split(".")
-        let fileExtension = originalFilename.pop() // retrieves only the extension, text after last dot
-        let newFilename = `${originalFilename.join(".")}-${parsedInital.included[i].id}.${fileExtension}` // frankensteins together a filename with -<id> appended
+        if(parsedInital.included[i].attributes.file_name === null) {
+            continue
+        }
+
+        const originalFilename = parsedInital.included[i].attributes.file_name.split(".")
+        const fileExtension = originalFilename.pop() // retrieves only the extension, text after last dot
+        const newFilename = `${originalFilename.join(".")}-${parsedInital.included[i].id}.${fileExtension}` // frankensteins together a filename with -<id> appended
 
         addFileDownload(parsedInital.included[i].attributes.file_name, parsedInital.included[i].id, parsedInital.included[i].attributes.download_url);
     }
 
-    console.log("Collected " + downloads.length + " posts...")
+    console.log(`Collected ${downloads.length} posts...`)
 
     let nextURL = ""
     if ("links" in parsedInital) {
@@ -66,8 +70,8 @@
     }
 
     while (nextURL !== "") {
-        let recursivePostRequest = await fetch(nextURL)
-        let parsedPosts = await recursivePostRequest.json()
+        const recursivePostRequest = await fetch(nextURL)
+        const parsedPosts = await recursivePostRequest.json()
 
         let includedLength = 0;
         if ("included" in parsedPosts) {
@@ -83,10 +87,10 @@
         } else {
             nextURL = ""
         }
-        console.log("Collected " + downloads.length + " posts...")
+        console.log(`Collected ${downloads.length} posts...`)
     }
 
-    console.log("Sending " + downloads.length + " image links to patreon-dl...")
+    console.log(`Sending ${downloads.length} image links to patreon-dl...`)
     await fetch("http://localhost:9849/download", {
         method: 'POST',
         body: JSON.stringify(downloads)
