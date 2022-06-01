@@ -78,7 +78,7 @@ func DownloadURLCollector(w http.ResponseWriter, req *http.Request) {
 var jsGadget string
 func ServeGadget(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	_, err := fmt.Fprintf(w, jsGadget)
+	_, err := fmt.Fprint(w, jsGadget)
 	if err != nil {
 		log.Println(err)
 		return 

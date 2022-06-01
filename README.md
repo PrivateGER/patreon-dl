@@ -36,4 +36,4 @@ After a few seconds of loading, depending on how many posts the creator has, `pa
 
 `patreon-dl` is not distinguishable from normal use for Patreon. There is no risk of getting banned or punished for the use of this tool.
 
-All releases of `patreon-dl` are signed with a PGP key with the fingerprint `CAE625C962F94C67` and can be verified with `gpg --verify <name>.sig`. 
+Release tags of `patreon-dl` after v1.0.2 are signed with a PGP key with the fingerprint `CAE625C962F94C67`.
