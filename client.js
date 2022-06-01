@@ -16,9 +16,16 @@
         ])
     }
 
+    console.log("%cpatreon-dl Downloader - Starting...", "font-size:large")
+
+    if(!document.location.pathname.endsWith("/posts")) {
+        console.error("Invalid URL. Are you sure you are on the /posts page of the creator?\nStopping...")
+        return
+    }
+
     const basePostURL = "https://www.patreon.com/api/posts?"
 
-    const campaignID = Number(window.patreon.bootstrap.creator.data.id)
+    const campaignID = Number(window.patreon.bootstrap.creator.data.id) // this is an internal ID for the campaign, NOT the username
 
     console.log("Sending Patreon information to patreon-dl...")
 
@@ -30,6 +37,7 @@
         })
     });
 
+    // this filters the posts to only get posts that have some form of media + a download url for that media attached
     const initialQueryParams = new URLSearchParams({
         "include": "images,media",
         "fields[post]": "post_metadata",
@@ -70,6 +78,8 @@
     }
 
     while (nextURL !== "") {
+        await new Promise(r => setTimeout(r, 1000)); // wait for 1s to prevent #11
+
         const recursivePostRequest = await fetch(nextURL)
         const parsedPosts = await recursivePostRequest.json()
 
@@ -87,8 +97,10 @@
         } else {
             nextURL = ""
         }
-        console.log(`Collected ${downloads.length} posts...`)
+        console.log(`%cCollected %c${downloads.length} %cposts...`, "color:white", "color:green", "color:white");
     }
+
+    console.log("%cEnd of posts reached (total: %d)!", "color:green", downloads.length);
 
     console.log(`Sending ${downloads.length} image links to patreon-dl...`)
     await fetch("http://localhost:9849/download", {
