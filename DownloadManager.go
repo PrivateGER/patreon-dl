@@ -59,7 +59,7 @@ func DownloadJobHandler(safeDownloadList *SafeDownloadList) {
 
 	fmt.Printf(`Finished downloading in %d second(s)!
 You can download another set of images using the below JS snippet or exit patreon-dl:
-(async()=>{eval(await(await fetch(\"http://localhost:9849/gadget\")).text());})();`,
+(async()=>{eval(await(await fetch("http://localhost:9849/gadget")).text());})();`,
 		int(endedAt.Sub(startedAt).Seconds()),
 	)
 
