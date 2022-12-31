@@ -47,6 +47,10 @@
         "sort": "-published_at",
         "json-api-version": "1.0"
     })
+    const initialQueryFilterTag = new URLSearchParams(document.location.search).get('filters[tag]')
+    if (initialQueryFilterTag) {
+        initialQueryParams.set("filter[tag]", initialQueryFilterTag)
+    }
 
     let downloads = [];
 
