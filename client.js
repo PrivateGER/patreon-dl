@@ -50,6 +50,9 @@
     const initialQueryFilterTag = new URLSearchParams(document.location.search).get('filters[tag]')
     if (initialQueryFilterTag) {
         initialQueryParams.set("filter[tag]", initialQueryFilterTag)
+        console.log(`Collecting posts tagged "${initialQueryFilterTag}"`)
+    } else {
+        console.log('Collecting all posts')
     }
 
     let downloads = [];
