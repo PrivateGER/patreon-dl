@@ -4,6 +4,9 @@
 
 `patreon-dl` lets you download images of creators you support.
 
+# DEPRECATED.
+Use [gallery-dl](https://github.com/mikf/gallery-dl) for the same functionality (and more).
+
 ## Installation
 
 **If you are running Arch:** patreon-dl is available as [AUR package!](https://aur.archlinux.org/packages/patreon-dl/)
